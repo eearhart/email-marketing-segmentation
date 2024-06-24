@@ -2,10 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as pt
 
 data = pd.read_csv('/Users/elizabethearhart/email_marketing_proj/email-marketing-segmentation/direct_email_marketing_database.csv')
-
-print("Column Names:", data.columns)
 
 data.fillna(method='ffill', inplace=True)
 
@@ -44,4 +43,12 @@ evaluation = silhouette_score(data[segments_based_on], data['Cluster'])
 print(f'Silhouette Score: {evaluation}')
 
 cluster_summary = data.groupby('Cluster').mean()
-print(cluster_summary)
+
+cluster_summary[segments_based_on].plot(kind='bar', figsize=(12,6))
+pt.title('Cluster Visualization')
+pt.xlabel('Cluster Group')
+pt.ylabel('Mean')
+pt.xticks(rotation=0)
+pt.legend(loc='upper right')
+pt.tight_layout()
+pt.show()
