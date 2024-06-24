@@ -3,6 +3,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as pt
+import seaborn as sns
 
 data = pd.read_csv('/Users/elizabethearhart/email_marketing_proj/email-marketing-segmentation/direct_email_marketing_database.csv')
 
@@ -42,13 +43,15 @@ data['Cluster'] = clusters
 evaluation = silhouette_score(data[segments_based_on], data['Cluster'])
 print(f'Silhouette Score: {evaluation}')
 
-cluster_summary = data.groupby('Cluster').mean()
+cluster_means = data.groupby('Cluster').mean().reset_index()
 
-cluster_summary[segments_based_on].plot(kind='bar', figsize=(12,6))
-pt.title('Cluster Visualization')
-pt.xlabel('Cluster Group')
-pt.ylabel('Mean')
-pt.xticks(rotation=0)
-pt.legend(loc='upper right')
-pt.tight_layout()
-pt.show()
+other_features_of_interest = ['age', 'n_purchase', 'avg_price', 'n_sessions', 'total_revenue', 'n_click_reminder']
+
+pt.figure(figsize=(12, 8))
+for feature in other_features_of_interest:
+    sns.barplot(x='Cluster', y=feature, data=cluster_means, errorbar=None)
+    pt.title(f'Mean {feature} across Clusters')
+    pt.ylabel(f'Mean {feature}')
+    pt.xlabel('Cluster')
+    pt.savefig('title.png')
+    pt.show()
